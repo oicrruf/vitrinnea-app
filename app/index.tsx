@@ -8,6 +8,7 @@ import axios from "axios";
 import { Image } from "expo-image";
 import { Button, Icon } from "react-native-paper";
 import * as Yup from "yup";
+import { router } from "expo-router";
 
 const SignUpSchema = Yup.object().shape({
   username: Yup.string().required("El usuario es requerido"),
@@ -24,6 +25,7 @@ const Login = () => {
       .then(async (response) => {
         try {
           await AsyncStorage.setItem("@token", response.data.token);
+          router.replace("/products");
         } catch (e) {
           console.log(e);
         }
