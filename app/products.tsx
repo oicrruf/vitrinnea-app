@@ -7,6 +7,7 @@ import { Dimensions, ListRenderItem, StyleSheet, View } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import { Text } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Link } from "expo-router";
 
 type Products = {
   id: number;
@@ -49,19 +50,28 @@ const Products = () => {
     getProducts();
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetchItems();
   }, []);
 
   const renderItem = ({ item }: any) => {
     return (
-      <View style={styles.product}>
-        <Image source={item.image} contentFit="contain" style={styles.image} />
-        <View style={styles.detail}>
-          <Text variant="titleSmall">{item.title}</Text>
-          <Text variant="titleLarge">${item.price}</Text>
+      <Link
+        href={{ pathname: "/detail", params: { id: item.id } }}
+        style={styles.link}
+      >
+        <View style={styles.product}>
+          <Image
+            source={item.image}
+            contentFit="contain"
+            style={styles.image}
+          />
+          <View style={styles.detail}>
+            <Text variant="titleSmall">{item.title}</Text>
+            <Text variant="titleLarge">${item.price}</Text>
+          </View>
         </View>
-      </View>
+      </Link>
     );
   };
 
@@ -84,13 +94,16 @@ const Products = () => {
 };
 
 const styles = StyleSheet.create({
-  product: {
+  link: {
     padding: 10,
     borderRadius: 4,
     borderColor: "#c9c9c9",
     borderWidth: 1,
     marginBottom: 10,
     marginHorizontal: 16,
+  },
+  product: {
+    justifyContent: "space-between",
     flexDirection: "row",
   },
   image: {
