@@ -8,29 +8,15 @@ import { BASE_URL } from "@/constants";
 import { Icon, MD3Colors, Text } from "react-native-paper";
 import Rating from "@/components/Rating";
 import { ScrollView } from "react-native-gesture-handler";
-
-type Rate = {
-  rate: number;
-  count: number;
-};
-type Product = {
-  id: number;
-  title: string;
-  image: string;
-  price: number;
-  description: string;
-  category: string;
-  rating: Rate;
-};
+import { Product } from "@/types";
 
 const Detail = () => {
-  const product = useLocalSearchParams();
-
+  const params = useLocalSearchParams();
   const [detail, setDetail] = useState<Product>();
 
   useEffect(() => {
     axios
-      .get(`${BASE_URL}/products/${product.id}`)
+      .get(`${BASE_URL}/products/${params.id}`)
       .then((response) => {
         setDetail(response.data);
       })

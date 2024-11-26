@@ -1,10 +1,7 @@
-import { Appbar, Icon, PaperProvider, TextInput } from "react-native-paper";
-import { Link, Stack } from "expo-router";
+import Account from "@/components/Account";
+import { Stack } from "expo-router";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Image } from "expo-image";
-import { View } from "react-native";
+import { PaperProvider } from "react-native-paper";
 
 export default function RootLayout() {
   return (
@@ -20,11 +17,17 @@ export default function RootLayout() {
               headerTitle: "",
               headerShadowVisible: false,
               headerTintColor: "#000",
-              headerRight: () => (
-                <Link href={"/products"}>
-                  <Icon source="account" color={"#4c4c4c"} size={32} />
-                </Link>
-              ),
+              headerRight: () => <Account />,
+            }}
+          />
+          <Stack.Screen
+            name="user"
+            options={{
+              headerBackButtonDisplayMode: "minimal",
+              headerTitle: "",
+              headerShadowVisible: false,
+              headerTintColor: "#000",
+              headerRight: () => <Account />,
             }}
           />
         </Stack>

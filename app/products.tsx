@@ -8,18 +8,13 @@ import { FlatList } from "react-native-gesture-handler";
 import { Text } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Link } from "expo-router";
-
-type Products = {
-  id: number;
-  title: string;
-  image: string;
-  price: number;
-};
+import Rating from "@/components/Rating";
+import { Product } from "@/types";
 
 const { height } = Dimensions.get("window");
 
 const Products = () => {
-  const [products, setProducts] = useState<Products[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [search, setSearch] = useState<string>("");
 
   useEffect(() => {
@@ -67,8 +62,15 @@ const Products = () => {
             style={styles.image}
           />
           <View style={styles.detail}>
-            <Text variant="titleSmall">{item.title}</Text>
+            <Text variant="titleSmall" numberOfLines={2}>
+              {item.title}
+            </Text>
             <Text variant="titleLarge">${item.price}</Text>
+            <View style={styles.ratingAndCount}>
+              <Rating rate={item.rating.rate} />
+              <Text style={styles.opacityText}>({item?.rating?.count})</Text>
+            </View>
+            <Text style={styles.badge}>{item?.category}</Text>
           </View>
         </View>
       </Link>
@@ -120,6 +122,12 @@ const styles = StyleSheet.create({
   safeArea: { backgroundColor: "#fff" },
   flatListContent: { backgroundColor: "#fff", height: height - 100 },
   flatListBackground: { backgroundColor: "#fff" },
+  badge: {
+    marginTop: 10,
+    color: "#666666",
+  },
+  opacityText: { color: "#c9c9c9", fontSize: 13 },
+  ratingAndCount: { flexDirection: "row" },
 });
 
 export default Products;
