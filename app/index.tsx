@@ -1,14 +1,14 @@
-import { Formik } from "formik";
-import { default as React, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
-import { TextInput } from "react-native-paper";
 import { BASE_URL } from "@/constants";
+import isAuth from "@/utils/getToken";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { Image } from "expo-image";
-import { Button, Icon } from "react-native-paper";
+import { router, useNavigation } from "expo-router";
+import { Formik } from "formik";
+import { default as React, useEffect, useState } from "react";
+import { StyleSheet, Text, View } from "react-native";
+import { Button, Icon, TextInput } from "react-native-paper";
 import * as Yup from "yup";
-import { router } from "expo-router";
 
 const SignUpSchema = Yup.object().shape({
   username: Yup.string().required("El usuario es requerido"),
@@ -16,6 +16,7 @@ const SignUpSchema = Yup.object().shape({
 });
 
 const Login = () => {
+  const navigation = useNavigation();
   const [loading, setLoading] = useState<boolean>(false);
 
   const login = async (values: any) => {
@@ -35,6 +36,10 @@ const Login = () => {
       })
       .finally(() => setLoading(false));
   };
+
+  useEffect(() => {
+    isAuth().then((auth) => (auth ? router.replace("/products") : null));
+  }, [router]);
 
   return (
     <View style={styles.screen}>

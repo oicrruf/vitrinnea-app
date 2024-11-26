@@ -8,7 +8,10 @@ export default function RootLayout() {
     <GestureHandlerRootView>
       <PaperProvider theme={{ dark: false }}>
         <Stack>
-          <Stack.Screen name="index" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="index"
+            options={{ headerShown: false, gestureEnabled: false }}
+          />
           <Stack.Screen name="products" options={{ headerShown: false }} />
           <Stack.Screen
             name="detail"

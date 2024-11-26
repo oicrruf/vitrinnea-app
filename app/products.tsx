@@ -1,21 +1,34 @@
-import ListHeaderComponent from "@/components/ListHeaderComponent";
+import ListHeaderComponent from "@/components/ListHeader";
+import Rating from "@/components/Rating";
 import { BASE_URL } from "@/constants";
+import { Product } from "@/types";
+import isAuth from "@/utils/getToken";
 import axios from "axios";
 import { Image } from "expo-image";
+import { Link, router } from "expo-router";
+import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useState } from "react";
-import { Dimensions, ListRenderItem, StyleSheet, View } from "react-native";
+import { Dimensions, StyleSheet, View } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import { Text } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Link } from "expo-router";
-import Rating from "@/components/Rating";
-import { Product } from "@/types";
 
 const { height } = Dimensions.get("window");
 
 const Products = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [search, setSearch] = useState<string>("");
+
+  const getProducts = () => {
+    axios
+      .get(`${BASE_URL}/products`)
+      .then((response) => {
+        setProducts(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   useEffect(() => {
     getProducts();
@@ -30,24 +43,14 @@ const Products = () => {
     }
   }, [search]);
 
-  const getProducts = () => {
-    axios
-      .get(`${BASE_URL}/products`)
-      .then((response) => {
-        setProducts(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
-  const fetchItems = async () => {
+  useEffect(() => {
+    isAuth().then((auth) => (!auth ? router.replace("/") : null));
     getProducts();
-  };
+  }, []);
 
   useEffect(() => {
-    fetchItems();
-  }, []);
+    isAuth().then((auth) => (!auth ? router.replace("/") : null));
+  }, [router]);
 
   const renderItem = ({ item }: any) => {
     return (
@@ -79,6 +82,7 @@ const Products = () => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
+      <StatusBar style="dark" />
       <View style={styles.flatListContent}>
         <FlatList
           style={styles.flatListBackground}

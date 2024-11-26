@@ -1,45 +1,64 @@
-import { StyleSheet, View } from "react-native";
-import React, { useEffect, useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Image } from "expo-image";
-import { useLocalSearchParams, useGlobalSearchParams, Link } from "expo-router";
-import axios from "axios";
-import { BASE_URL } from "@/constants";
-import { Icon, MD3Colors, Text } from "react-native-paper";
+import Loading from "@/components/Loading";
 import Rating from "@/components/Rating";
-import { ScrollView } from "react-native-gesture-handler";
+import { BASE_URL } from "@/constants";
 import { Product } from "@/types";
+import isAuth from "@/utils/getToken";
+import axios from "axios";
+import { Image } from "expo-image";
+import { router, useLocalSearchParams } from "expo-router";
+import React, { useEffect, useState } from "react";
+import { StyleSheet, View } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
+import { Text } from "react-native-paper";
 
 const Detail = () => {
   const params = useLocalSearchParams();
   const [detail, setDetail] = useState<Product>();
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
+    isAuth().then((auth) => (!auth ? router.replace("/") : null));
+    setLoading(true);
     axios
       .get(`${BASE_URL}/products/${params.id}`)
       .then((response) => {
         setDetail(response.data);
+        setLoading(false);
       })
       .catch((error) => {
         console.log(error);
       });
   }, []);
 
-  return (
-    <ScrollView style={styles.scrollView}>
-      <Image source={detail?.image} style={styles.image} contentFit="contain" />
-      <Text variant="titleLarge">{detail?.title}</Text>
-      <View style={styles.meta}>
-        <View style={styles.rating}>
-          <Text>{detail?.rating?.rate}</Text>
-          <Rating rate={detail?.rating.rate} />
-          <Text style={styles.opacityText}>({detail?.rating?.count})</Text>
+  useEffect(() => {
+    isAuth().then((auth) => (!auth ? router.replace("/") : null));
+  }, [router]);
+
+  if (loading) {
+    return <Loading />;
+  }
+
+  if (!loading) {
+    return (
+      <ScrollView style={styles.scrollView}>
+        <Image
+          source={detail?.image}
+          style={styles.image}
+          contentFit="contain"
+        />
+        <Text variant="titleLarge">{detail?.title}</Text>
+        <View style={styles.meta}>
+          <View style={styles.rating}>
+            <Text>{detail?.rating?.rate}</Text>
+            <Rating rate={detail?.rating.rate} />
+            <Text style={styles.opacityText}>({detail?.rating?.count})</Text>
+          </View>
+          <Text style={styles.badge}>{detail?.category}</Text>
         </View>
-        <Text style={styles.badge}>{detail?.category}</Text>
-      </View>
-      <Text>{detail?.description}</Text>
-    </ScrollView>
-  );
+        <Text>{detail?.description}</Text>
+      </ScrollView>
+    );
+  }
 };
 
 export default Detail;
